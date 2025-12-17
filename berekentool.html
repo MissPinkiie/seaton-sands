@@ -323,7 +323,6 @@ document.getElementById('btn-reset-aankoop').onclick=()=>{
     if(input){
       input.value=0;
       document.getElementById(`sub-${id}`).textContent="0";
-      document.getElementById('sum-fee').textContent = "0";
     }
   });
   // approveExtra.checked=false;
@@ -334,6 +333,7 @@ document.getElementById('btn-reset-aankoop').onclick=()=>{
   document.getElementById('cnt-aankoop').textContent = "0";
   document.getElementById('rows-aankoop').innerHTML = "";
   document.getElementById('res-aankoop').hidden = true;
+  document.getElementById('sum-fee').textContent = "0";
 
   updateTotal();
 };
