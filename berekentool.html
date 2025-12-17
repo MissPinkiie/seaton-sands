@@ -213,7 +213,6 @@ const LABELS = {
   metaalschroot: "Metaalschroot",
   rubber: "Rubber",
   plastic: "Plastic",
-  glas: "Glas",
   koper: "Koper",
   banden: "Versleten fietsbanden",
   blikjes: "Lege blikjes",
@@ -226,9 +225,8 @@ const PRICES = {
   aankoop: {
     ijzer:20, staal:20,
     aluminium:25, carparts:25, metaalschroot:25, rubber:25, craftparts:25, elektronischschroot:25,
-    plastic:20, glas:10, koper:20
+    plastic:20, koper:20
   },
-  recycling: { banden:10, blikjes:10, telefoons:10, radios:10 }
 };
 
 // goedkeuring toggle
@@ -247,45 +245,73 @@ const PRICES = {
 
 // berekenen sectie
 function compute(section){
-  const prices=PRICES[section]; let sum=0,count=0; let rows=[];
-  for(const id in prices){
-    const input=document.getElementById(id);
-    if(!input) continue;
-    // if(restrictedIds.includes(id) && !approveExtra.checked){
-    //   document.getElementById(`sub-${id}`).textContent="0";
-    //   continue;
-    // }
-    const qty=parseInt(input.value)||0;
-    const sub=qty*prices[id];
-    sum+=sub; count+=qty;
-    document.getElementById(`sub-${id}`).textContent=euro(sub);
-    if(qty>0){ rows.push([id,qty,prices[id],sub]); }
+  const prices = PRICES[section];
+  let sum = 0, count = 0, feeSum = 0;
+  let rows = [];
+
+  for (const id in prices) {
+    const input = document.getElementById(id);
+    if (!input) continue;
+
+    const qty = parseInt(input.value) || 0;
+
+    const baseSub = qty * prices[id];                 // basis subtotaal
+    const fee = (qty > 1000) ? qty * 5 : 0;           // toeslag per materiaalregel
+    const lineTotal = baseSub + fee;                  // totaal voor deze regel
+
+    sum += lineTotal;
+    feeSum += fee;
+    count += qty;
+
+    // In de "Prijs"-kolom naast de input tonen we (zoals voorheen) het basis subtotaal
+    document.getElementById(`sub-${id}`).textContent = euro(baseSub);
+
+    if (qty > 0) {
+      // geef fee ook mee zodat renderRows er een extra rij van kan maken
+      rows.push([id, qty, prices[id], baseSub, fee]);
+    }
   }
-  return {sum,count,rows};
+
+  return { sum, count, feeSum, rows };
 }
 
 // render tabel
-function renderRows(section,data){
-  const tbody=document.getElementById(`rows-${section}`);
-  tbody.innerHTML="";
-  data.forEach(([id,qty,price,sub])=>{
-    const tr=document.createElement("tr");
+function renderRows(section, data){
+  const tbody = document.getElementById(`rows-${section}`);
+  tbody.innerHTML = "";
+
+  data.forEach(([id, qty, price, baseSub, fee]) => {
     const label = LABELS[id] || id;
+
+    // hoofdregel (basis)
+    const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${label}</td>
       <td class="right">${qty}</td>
       <td class="right">€${euro(price)}</td>
-      <td class="right">€${euro(sub)}</td>
+      <td class="right">€${euro(baseSub)}</td>
     `;
     tbody.appendChild(tr);
+
+    // extra toeslagregel (alleen bij > 1000)
+    if (fee > 0) {
+      const trFee = document.createElement("tr");
+      trFee.innerHTML = `
+        <td colspan="3">Toeslag (${qty} × €5)</td>
+        <td class="right">€${euro(fee)}</td>
+      `;
+      tbody.appendChild(trFee);
+    }
   });
 }
 
+
 // Aankoop
 document.getElementById('btn-aankoop').onclick=()=>{
-  const {sum,count,rows}=compute('aankoop');
+  const {sum,count,feeSum,rows}=compute('aankoop');
   document.getElementById('sum-aankoop').textContent=euro(sum);
   document.getElementById('cnt-aankoop').textContent=count;
+   document.getElementById('sum-fee').textContent = euro(feeSum);
   renderRows('aankoop',rows);
   document.getElementById('res-aankoop').hidden=false;
   updateTotal();
@@ -350,11 +376,7 @@ function updateTotal(){
   const totalCount = ca;
   const baseTotal = a;
 
-  // Bulk toeslag: als totaal aantal items > 1000, dan €5 extra per item
-  const fee = totalCount > 1000 ? totalCount * 5 : 0;
-
-  document.getElementById('sum-fee').textContent = euro(fee);
-  document.getElementById('sum-total').textContent = euro(baseTotal + fee);
+  document.getElementById('sum-total').textContent = euro(baseTotal);
   document.getElementById('cnt-total').textContent = totalCount.toString();
 }
 
@@ -372,7 +394,6 @@ document.addEventListener('keydown', e => {
 // reset alles
 document.getElementById('btn-reset-all').onclick = () => {
   document.getElementById('btn-reset-aankoop').click();
-  document.getElementById('btn-reset-recycling').click();
 };
 
 // Kopieer bericht (random variant)
