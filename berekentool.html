@@ -232,18 +232,18 @@ const PRICES = {
 };
 
 // goedkeuring toggle
-const approveExtra = document.getElementById('approve-extra');
-const restrictedIds = ["plastic","glas","koper"];
-approveExtra.addEventListener('change',()=>{
-  restrictedIds.forEach(id=>{
-    const input=document.getElementById(id);
-    input.disabled=!approveExtra.checked;
-    if(!approveExtra.checked){
-      input.value=0;
-      document.getElementById(`sub-${id}`).textContent="0";
-    }
-  });
-});
+// const approveExtra = document.getElementById('approve-extra');
+// const restrictedIds = ["plastic","glas","koper"];
+// approveExtra.addEventListener('change',()=>{
+//   restrictedIds.forEach(id=>{
+//     const input=document.getElementById(id);
+//     input.disabled=!approveExtra.checked;
+//     if(!approveExtra.checked){
+//       input.value=0;
+//       document.getElementById(`sub-${id}`).textContent="0";
+//     }
+//   });
+// });
 
 // berekenen sectie
 function compute(section){
@@ -251,10 +251,10 @@ function compute(section){
   for(const id in prices){
     const input=document.getElementById(id);
     if(!input) continue;
-    if(restrictedIds.includes(id) && !approveExtra.checked){
-      document.getElementById(`sub-${id}`).textContent="0";
-      continue;
-    }
+    // if(restrictedIds.includes(id) && !approveExtra.checked){
+    //   document.getElementById(`sub-${id}`).textContent="0";
+    //   continue;
+    // }
     const qty=parseInt(input.value)||0;
     const sub=qty*prices[id];
     sum+=sub; count+=qty;
@@ -299,8 +299,8 @@ document.getElementById('btn-reset-aankoop').onclick=()=>{
       document.getElementById(`sub-${id}`).textContent="0";
     }
   });
-  approveExtra.checked=false;
-  restrictedIds.forEach(id=>document.getElementById(id).disabled=true);
+  // approveExtra.checked=false;
+  // restrictedIds.forEach(id=>document.getElementById(id).disabled=true);
 
   // sectie-samenvatting leegmaken
   document.getElementById('sum-aankoop').textContent = "0";
