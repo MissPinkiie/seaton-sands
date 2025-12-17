@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html> -->
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
@@ -312,43 +312,43 @@ document.getElementById('btn-reset-aankoop').onclick=()=>{
 };
 
 // Recycling
-document.getElementById('btn-recycling').onclick=()=>{
-  const {sum,count,rows}=compute('recycling');
-  document.getElementById('sum-recycling').textContent=euro(sum);
-  document.getElementById('cnt-recycling').textContent=count;
-  renderRows('recycling',rows);
-  document.getElementById('res-recycling').hidden=false;
-  updateTotal();
-};
+// document.getElementById('btn-recycling').onclick=()=>{
+//   const {sum,count,rows}=compute('recycling');
+//   document.getElementById('sum-recycling').textContent=euro(sum);
+//   document.getElementById('cnt-recycling').textContent=count;
+//   renderRows('recycling',rows);
+//   document.getElementById('res-recycling').hidden=false;
+//   updateTotal();
+// };
 
-document.getElementById('btn-reset-recycling').onclick=()=>{
-  Object.keys(PRICES.recycling).forEach(id=>{
-    const input=document.getElementById(id);
-    if(input){
-      input.value=0;
-      document.getElementById(`sub-${id}`).textContent="0";
-    }
-  });
+// document.getElementById('btn-reset-recycling').onclick=()=>{
+//   Object.keys(PRICES.recycling).forEach(id=>{
+//     const input=document.getElementById(id);
+//     if(input){
+//       input.value=0;
+//       document.getElementById(`sub-${id}`).textContent="0";
+//     }
+//   });
 
   // sectie-samenvatting leegmaken
-  document.getElementById('sum-recycling').textContent = "0";
-  document.getElementById('cnt-recycling').textContent = "0";
-  document.getElementById('rows-recycling').innerHTML = "";
-  document.getElementById('res-recycling').hidden = true;
+  // document.getElementById('sum-recycling').textContent = "0";
+  // document.getElementById('cnt-recycling').textContent = "0";
+  // document.getElementById('rows-recycling').innerHTML = "";
+  // document.getElementById('res-recycling').hidden = true;
 
-  updateTotal();
+  // updateTotal();
 };
 
 // totaal
 function updateTotal(){
   const a = parseEuro(document.getElementById('sum-aankoop').textContent);
-  const r = parseEuro(document.getElementById('sum-recycling').textContent);
+  // const r = parseEuro(document.getElementById('sum-recycling').textContent);
 
   const ca = parseInt(document.getElementById('cnt-aankoop').textContent || "0", 10) || 0;
-  const cr = parseInt(document.getElementById('cnt-recycling').textContent || "0", 10) || 0;
+  // const cr = parseInt(document.getElementById('cnt-recycling').textContent || "0", 10) || 0;
 
-  const totalCount = ca + cr;
-  const baseTotal = a + r;
+  const totalCount = ca;
+  const baseTotal = a;
 
   // Bulk toeslag: als totaal aantal items > 1000, dan €5 extra per item
   const fee = totalCount > 1000 ? totalCount * 5 : 0;
