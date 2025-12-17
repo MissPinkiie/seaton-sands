@@ -45,7 +45,7 @@
 <body>
 <header>
   <img src="logo.png" alt="Seaton Sands" class="logo">
-  <h1>Inkoop & Recycling — Berekentool</h1>
+  <h1>Inkoop — Berekentool</h1>
   <p>Vul aantallen in per item en klik op <b>Bereken</b>. Alle prijzen in EUR per stuk.</p>
 </header>
 
@@ -54,9 +54,9 @@
   <!-- Sectie 1: Aankoop materialen -->
   <section class="card" id="aankoop">
     <h2>Aankoop materialen</h2>
-    <p class="switch">
+    <!-- <p class="switch">
       <input type="checkbox" id="approve-extra"> Goedkeuring van manager voor plastic, glas en koper
-    </p>
+    </p> -->
 
     <div class="grid">
       <div class="head">Item</div>
@@ -95,9 +95,17 @@
       <div><input id="staal" type="number" min="0" value="0"></div>
       <div class="sub">€<span id="sub-staal">0</span></div>
 
+      <div><label for="koper">Koper</label><div class="price">€20 / stuk</div></div>
+      <div><input id="koper" type="number" min="0" value="0"></div>
+      <div class="sub">€<span id="sub-koper">0</span></div>
+
+      <div><label for="plastic">Plastic</label><div class="price">€20 / stuk</div></div>
+      <div><input id="plastic" type="number" min="0" value="0"></div>
+      <div class="sub">€<span id="sub-plastic">0</span></div>
+
       <!-- €10 (restricted) -->
 
-      <div><label for="glas">Glas</label><div class="price">€10 / stuk</div></div>
+      <!-- <div><label for="glas">Glas</label><div class="price">€10 / stuk</div></div>
       <div><input id="glas" type="number" min="0" value="0" disabled></div>
       <div class="sub">€<span id="sub-glas">0</span></div>
 
@@ -107,7 +115,7 @@
 
       <div><label for="plastic">Plastic</label><div class="price">€20 / stuk</div></div>
       <div><input id="plastic" type="number" min="0" value="0" disabled></div>
-      <div class="sub">€<span id="sub-plastic">0</span></div>
+      <div class="sub">€<span id="sub-plastic">0</span></div> -->
     </div>
 
     <button class="primary" id="btn-aankoop">Bereken aankoop</button>
@@ -125,8 +133,8 @@
     </div>
   </section>
 
-  <!-- <!-- Sectie 2: Recycling -->
-  <section class="card" id="recycling">
+  <!-- Sectie 2: Recycling -->
+  <!-- <section class="card" id="recycling">
     <h2>Recycling materialen</h2>
     <div class="grid">
       <div class="head">Item</div>
@@ -170,6 +178,7 @@
     <h2>Totaal</h2>
     <div class="totals">
       <div class="pill"><div class="label">Bedrag totaal</div><div class="value">€ <span id="sum-total">0</span></div></div>
+      <div class="pill"><div class="label">Bulk toeslag (meer dan 1000 items)</div><div class="value">€ <span id="sum-fee">0</span></div></div>
       <div class="pill"><div class="label">Aantal totaal</div><div class="value"><span id="cnt-total">0</span></div></div>
     </div>
 
@@ -217,7 +226,7 @@ const PRICES = {
   aankoop: {
     ijzer:20, staal:20,
     aluminium:25, carparts:25, metaalschroot:25, rubber:25, craftparts:25, elektronischschroot:25,
-    plastic:10, glas:10, koper:10
+    plastic:20, glas:10, koper:20
   },
   recycling: { banden:10, blikjes:10, telefoons:10, radios:10 }
 };
@@ -338,8 +347,15 @@ function updateTotal(){
   const ca = parseInt(document.getElementById('cnt-aankoop').textContent || "0", 10) || 0;
   const cr = parseInt(document.getElementById('cnt-recycling').textContent || "0", 10) || 0;
 
-  document.getElementById('sum-total').textContent = euro(a + r);
-  document.getElementById('cnt-total').textContent = (ca + cr).toString();
+  const totalCount = ca + cr;
+  const baseTotal = a + r;
+
+  // Bulk toeslag: als totaal aantal items > 1000, dan €5 extra per item
+  const fee = totalCount > 1000 ? totalCount * 5 : 0;
+
+  document.getElementById('sum-fee').textContent = euro(fee);
+  document.getElementById('sum-total').textContent = euro(baseTotal + fee);
+  document.getElementById('cnt-total').textContent = totalCount.toString();
 }
 
 // enter-to-bereken
